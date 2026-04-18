@@ -8,6 +8,9 @@
 ## **信息论**
 - [信息论第1到7章全面复习](信息论/信息论第1到7章全面复习.md)
 
+## 计嵌
+- [第三章存储器讲义](计嵌/ch3_memory_system.html)
+
 ## **Misc**
 - [PE_Tutorial](Misc/PE_Tutorial.docx)
 

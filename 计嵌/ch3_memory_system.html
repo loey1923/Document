@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第3章 存储器系统 — 复习宝典</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=JetBrains+Mono:wght@400;700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface2: #f6f8fa;
+  --border: #d0d7de;
+  --accent: #0969da;
+  --accent2: #9a6700;
+  --accent3: #1a7f37;
+  --accent4: #cf222e;
+  --text: #1f2328;
+  --text-muted: #59636e;
+  --tag: #ddf4ff;
+  --star: #9a6700;
+  --code-bg: #f6f8fa;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Serif SC', serif;
+  font-size: 15px;
+  line-height: 1.8;
+  display: flex;
+}
+
+/* ─── SIDEBAR ─── */
+#sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 240px; height: 100vh;
+  background: var(--surface2);
+  border-right: 1px solid var(--border);
+  overflow-y: auto; padding: 20px 0;
+  z-index: 100;
+}
+#sidebar h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 13px; letter-spacing: 2px;
+  color: var(--accent); padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+#sidebar a {
+  display: block; padding: 7px 20px;
+  color: var(--text-muted); text-decoration: none;
+  font-size: 13px; transition: all .2s;
+  border-left: 3px solid transparent;
+}
+#sidebar a:hover, #sidebar a.active {
+  color: var(--text); background: #eaeef2;
+  border-left-color: var(--accent);
+}
+#sidebar .sec-label {
+  font-size: 11px; color: var(--accent2);
+  padding: 14px 20px 4px; letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ─── MAIN ─── */
+#main { margin-left: 240px; max-width: 960px; padding: 40px 48px 80px; }
+
+/* ─── HEADINGS ─── */
+.page-title {
+  font-family: 'Cinzel', serif;
+  font-size: 28px; color: var(--accent);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 16px; margin-bottom: 8px;
+}
+.subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 40px; }
+h2.sec {
+  font-size: 20px; color: var(--accent2);
+  margin: 48px 0 20px;
+  border-left: 4px solid var(--accent2);
+  padding-left: 14px;
+}
+h3.subsec {
+  font-size: 16px; color: var(--accent3);
+  margin: 28px 0 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+h3.subsec::before { content: '◆'; font-size: 11px; }
+h4.point {
+  font-size: 14px; color: var(--accent);
+  margin: 20px 0 8px;
+}
+
+/* ─── BOXES ─── */
+.box {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 20px 24px; margin: 16px 0;
+}
+.box.key {
+  border-color: #b6e3ff; background: #ddf4ff;
+}
+.box.warn {
+  border-color: #d4a72c; background: #fff8c5;
+}
+.box.tip {
+  border-color: #4ac26b; background: #dafbe1;
+}
+.box.problem {
+  border-color: #ff8182; background: #ffebe9;
+}
+.box-title {
+  font-size: 12px; letter-spacing: 1px; margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.box.key .box-title { color: var(--accent); }
+.box.warn .box-title { color: var(--accent2); }
+.box.tip .box-title { color: var(--accent3); }
+.box.problem .box-title { color: var(--accent4); }
+
+/* ─── TABLES ─── */
+table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; }
+th { background: var(--surface2); color: var(--accent); padding: 9px 14px; text-align: left; }
+td { padding: 8px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:hover td { background: #f3f4f6; }
+.good { color: var(--accent3); }
+.bad { color: var(--accent4); }
+.mid { color: var(--accent2); }
+
+/* ─── CODE / ADDRESS ─── */
+code {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--code-bg); color: #1f2328;
+  border: 1px solid var(--border);
+  padding: 1px 6px; border-radius: 4px; font-size: 12px;
+}
+.addr { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; }
+
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: #1f2328;
+  overflow-x: auto;
+}
+
+/* ─── STAR BADGES ─── */
+.star { color: var(--star); font-size: 13px; }
+.badge {
+  display: inline-block; font-size: 11px; padding: 2px 8px;
+  border-radius: 10px; font-weight: 700; margin-left: 6px;
+  vertical-align: middle;
+}
+.badge.hot { background: #ffebe9; color: #cf222e; border: 1px solid #ffd8d3; }
+.badge.core { background: #ddf4ff; color: #0969da; border: 1px solid #b6e3ff; }
+
+/* ─── STEP BOXES ─── */
+.steps { counter-reset: step; }
+.step {
+  display: flex; gap: 14px; margin: 10px 0; align-items: flex-start;
+}
+.step-num {
+  min-width: 28px; height: 28px;
+  background: var(--accent); color: #fff;
+  border-radius: 50%; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 13px; font-family: 'JetBrains Mono'; font-weight: 700;
+  flex-shrink: 0; margin-top: 2px;
+}
+.step-body { flex: 1; }
+
+/* ─── FORMULA ─── */
+.formula {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px; padding: 10px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px; color: #0550ae;
+  margin: 12px 0; text-align: center;
+}
+
+/* Specific tweak for the "容量公式" block to avoid a heavy code-block feel */
+.formula.capacity-formula {
+  background: #fffef5;
+  border-color: #e3d8a4;
+  color: #745400;
+  font-size: 12.5px;
+  margin: 8px 0 10px;
+}
+
+/* ─── SVG DIAGRAM CONTAINER ─── */
+.diagram {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 16px;
+  margin: 16px 0; text-align: center;
+  overflow-x: auto;
+}
+.diagram-caption {
+  font-size: 12px; color: var(--text-muted);
+  margin-top: 10px; font-style: italic;
+}
+
+/* ─── SVG LIGHT THEME MAPPING ─── */
+.diagram svg [fill="#242840"] { fill: #f6f8fa !important; }
+.diagram svg [fill="#1a1d2e"] { fill: #ffffff !important; }
+.diagram svg [fill="#13183a"] { fill: #ddf4ff !important; }
+.diagram svg [fill="#1e1800"] { fill: #fff8c5 !important; }
+.diagram svg [fill="#0f1f14"] { fill: #dafbe1 !important; }
+
+.diagram svg [fill="#dde3f5"] { fill: #1f2328 !important; }
+.diagram svg [fill="#8b92b8"] { fill: #59636e !important; }
+.diagram svg [stroke="#8b92b8"] { stroke: #59636e !important; }
+
+.diagram svg [fill="#5b8dee"] { fill: #0969da !important; }
+.diagram svg [stroke="#5b8dee"] { stroke: #0969da !important; }
+.diagram svg [fill="#e8a838"] { fill: #9a6700 !important; }
+.diagram svg [stroke="#e8a838"] { stroke: #9a6700 !important; }
+.diagram svg [fill="#4ecb71"] { fill: #1a7f37 !important; }
+.diagram svg [stroke="#4ecb71"] { stroke: #1a7f37 !important; }
+.diagram svg [fill="#e05c7a"] { fill: #cf222e !important; }
+.diagram svg [stroke="#e05c7a"] { stroke: #cf222e !important; }
+
+/* ─── HIGHLIGHT ─── */
+mark { background: #fff8c5; color: var(--accent2); padding: 0 3px; border-radius: 2px; }
+.hl-blue { color: var(--accent); font-weight: 600; }
+.hl-green { color: var(--accent3); font-weight: 600; }
+.hl-red { color: var(--accent4); font-weight: 600; }
+.hl-gold { color: var(--accent2); font-weight: 600; }
+
+/* ─── UL/OL ─── */
+ul, ol { padding-left: 22px; }
+li { margin: 5px 0; }
+
+/* ─── COMPARISON GRID ─── */
+.compare-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 14px; margin: 14px 0;
+}
+@media (max-width: 700px) { .compare-grid { grid-template-columns: 1fr; } }
+
+/* ─── DIVIDER ─── */
+hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+/* ─── ANSWER TOGGLE ─── */
+details { margin: 10px 0; }
+summary {
+  cursor: pointer; color: var(--accent);
+  font-size: 13.5px; padding: 8px 12px;
+  background: var(--surface2); border-radius: 6px;
+  list-style: none;
+}
+summary::-webkit-details-marker { display: none; }
+summary::before { content: '▶ '; color: var(--accent2); }
+details[open] summary::before { content: '▼ '; }
+details .ans {
+  padding: 16px 20px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 0 0 6px 6px;
+  margin-top: 1px;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<nav id="sidebar">
+  <h2>CH.3 存储器系统</h2>
+  <span class="sec-label">概述</span>
+  <a href="#s1">1. 存储器概述</a>
+  <span class="sec-label">存储器件</span>
+  <a href="#s2">2. ROM 类型对比</a>
+  <a href="#s3">3. RAM：SRAM & DRAM</a>
+  <span class="sec-label">⭐ 核心考点</span>
+  <a href="#s4">4. 存储器扩展</a>
+  <a href="#s4-1">　4.1 位扩展</a>
+  <a href="#s4-2">　4.2 字扩展</a>
+  <a href="#s4-3">　4.3 复合扩展</a>
+  <a href="#s5">5. Cache 地址映射</a>
+  <a href="#s5-1">　5.1 全相联映射</a>
+  <a href="#s5-2">　5.2 直接相联映射</a>
+  <a href="#s5-3">　5.3 组相联映射</a>
+  <a href="#s5-4">　5.4 三种方式对比</a>
+  <a href="#s5-5">　5.5 替换与写策略</a>
+  <span class="sec-label">虚拟存储器</span>
+  <a href="#s6">6. 虚拟存储器</a>
+  <span class="sec-label">📝 习题精解</span>
+  <a href="#p320">　题3.20 直接映射计算</a>
+  <a href="#p321">　题3.21 组相联计算</a>
+  <a href="#p340">　补充3.40 ⭐</a>
+  <a href="#p323">　题3.23-3.27 扩展设计</a>
+</nav>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main id="main">
+
+<div class="page-title">第 3 章 · 存储器系统</div>
+<div class="subtitle">计算机原理与嵌入式系统 · 期末复习宝典 · 重点标注版</div>
+
+<!-- ════════ SECTION 1 ════════ -->
+<h2 class="sec" id="s1">1. 存储器概述</h2>
+
+<h3 class="subsec">层次化存储体系</h3>
+<p>离 CPU 越近 → 速度越快、容量越小、成本越高：</p>
+
+<div class="formula">寄存器 → L1 Cache → L2 Cache → L3 Cache → 主存(DRAM) → 外存(HDD/SSD)</div>
+
+<table>
+<tr><th>层次</th><th>实现技术</th><th>容量级别</th><th>速度</th></tr>
+<tr><td>寄存器</td><td>触发器</td><td>kB 级</td><td>最快（CPU 内）</td></tr>
+<tr><td>Cache（L1/L2/L3）</td><td>SRAM</td><td>32KB～数十MB</td><td>纳秒级</td></tr>
+<tr><td>主存（内存）</td><td>DRAM</td><td>GB 级</td><td>纳秒级（较慢）</td></tr>
+<tr><td>外存</td><td>HDD/SSD/Flash</td><td>TB 级</td><td>毫秒级</td></tr>
+</table>
+
+<h3 class="subsec">性能指标</h3>
+<ul>
+<li><strong>存取时间 T<sub>A</sub></strong>：从发出读命令到数据进入寄存器的时间</li>
+<li><strong>存取周期 T<sub>M</sub></strong>：连续两次独立操作的最小间隔，<mark>T<sub>M</sub> ≥ T<sub>A</sub></mark></li>
+<li><strong>带宽 B<sub>M</sub> = W / T<sub>M</sub></strong>（W 为总线位宽，单位 b/s）</li>
+</ul>
+
+<div class="box warn">
+<div class="box-title">⚠ 容量公式</div>
+若芯片地址线 n 根、数据线 m 根：<br>
+<div class="formula capacity-formula">容量 = 2ⁿ × m 位 = 2ⁿ × m/8 字节</div>
+例：地址线13根、数据线8根 → 2¹³ × 8 bit = 8K × 8位 = 8KB
+</div>
+
+<!-- ════════ SECTION 2 ════════ -->
+<h2 class="sec" id="s2">2. ROM 类型对比 <span class="badge core">需掌握</span></h2>
+
+<table>
+<tr>
+  <th>类型</th><th>编程方式</th><th>擦除方式</th><th>擦除粒度</th><th>关键物理机制</th><th>优缺点</th>
+</tr>
+<tr>
+  <td><strong>掩模 ROM</strong></td><td>出厂固化</td><td>不可擦</td><td>—</td>
+  <td>光刻掩模确定是否连接 MOS 管</td>
+  <td><span class="good">成本低</span> / <span class="bad">不可修改</span></td>
+</tr>
+<tr>
+  <td><strong>PROM</strong></td><td>熔丝一次编程</td><td>不可擦</td><td>—</td>
+  <td>大电流熔断熔丝（或击穿反熔丝）</td>
+  <td><span class="good">用户可写一次</span> / <span class="bad">不可修改</span></td>
+</tr>
+<tr>
+  <td><strong>EPROM</strong></td><td>编程器高压写</td><td>紫外线照射</td><td>整片</td>
+  <td><mark>SIMOS 浮栅管</mark>：雪崩注入热电子到浮栅<br>紫外线光子使电子逸出（光电效应）</td>
+  <td><span class="good">可多次重用</span> / <span class="bad">擦除需拆板，紫外线整片擦</span></td>
+</tr>
+<tr>
+  <td><strong>EEPROM</strong></td><td>电写入（字节级）</td><td>电擦除</td><td>字节</td>
+  <td><mark>Flotox 浮栅管 + 选通管</mark>：<br>隧道效应（隧道区厚度 &lt;20nm）使电子双向穿越</td>
+  <td><span class="good">字节级擦写，在线操作</span> / <span class="bad">集成度低（双管）</span></td>
+</tr>
+<tr>
+  <td><strong>Flash（NOR）</strong></td><td>热电子注入浮栅</td><td>隧道效应放电</td><td>块</td>
+  <td>叠栅单管，XIP（可直接执行）</td>
+  <td><span class="good">单管集成度高，可随机读</span> / <span class="bad">擦除以块为单位，速度慢</span></td>
+</tr>
+<tr>
+  <td><strong>Flash（NAND）</strong></td><td>隧道效应注入</td><td>隧道效应放电</td><td>块</td>
+  <td>串行访问，页读写/块擦除</td>
+  <td><span class="good">密度极高，适合大容量存储</span> / <span class="bad">不支持随机字节读写</span></td>
+</tr>
+</table>
+
+<div class="box key">
+<div class="box-title">🔑 物理机制速记</div>
+<ul>
+<li><strong>热电子注入（NOR Flash 写入、EPROM 编程）</strong>：漏源高压产生高能热电子，穿越 SiO₂ 注入浮栅 → 浮栅带负电 → 管子阈值升高 → 截止 → 存储"0"（或"1"视约定）</li>
+<li><strong>隧道效应（NAND Flash 擦/写、EEPROM 擦/写）</strong>：超薄氧化层（&lt;20nm）中，强电场让电子"量子隧穿"，可双向通过 → 实现浮栅充放电</li>
+<li>均属"非易失性"：断电后浮栅被 SiO₂ 包围，无放电通路，电荷长期保存</li>
+<li>它们具有读写功能仍称 ROM，因为<mark>正常工作状态下只读，写入需特殊高压或条件</mark>，且非易失性与 ROM 本义一致</li>
+</ul>
+</div>
+
+<h3 class="subsec">NOR Flash vs NAND Flash</h3>
+<div class="compare-grid">
+<div class="box">
+<strong style="color:var(--accent)">NOR Flash</strong>
+<ul>
+<li>读：随机字节/字寻址，支持 XIP（芯片内执行）</li>
+<li>写：单字节/字编程（热电子注入）</li>
+<li>擦：以<mark>块</mark>为单位</li>
+<li>速度慢（擦写），适合存代码</li>
+<li>嵌入式系统启动 ROM</li>
+</ul>
+</div>
+<div class="box">
+<strong style="color:var(--accent3)">NAND Flash</strong>
+<ul>
+<li>读：以<mark>页</mark>为单位（串行）</li>
+<li>写：以<mark>页</mark>为单位（隧道效应）</li>
+<li>擦：以<mark>块</mark>为单位，速度快（2ms vs 750ms）</li>
+<li>密度高、位成本低，适合大容量存储</li>
+<li>U盘、SSD、eMMC、SD卡存储介质</li>
+</ul>
+</div>
+</div>
+
+<!-- ════════ SECTION 3 ════════ -->
+<h2 class="sec" id="s3">3. RAM：SRAM 与 DRAM</h2>
+
+<table>
+<tr><th>特性</th><th>SRAM（静态）</th><th>DRAM（动态）</th></tr>
+<tr><td>存储原理</td><td>六管双稳态触发器（锁存器）</td><td>单管 + 电容（靠电荷量存储）</td></tr>
+<tr><td>刷新</td><td>无需刷新</td><td>需定时刷新（约 2ms/次，逐行）</td></tr>
+<tr><td>集成度</td><td>低（6管/bit）</td><td>高（1管/bit）</td></tr>
+<tr><td>速度</td><td>快（ns 级）</td><td>较慢（SDRAM：ns 级，但延迟高）</td></tr>
+<tr><td>地址线</td><td>独立（行列分开）</td><td><mark>行列地址复用</mark>，分时送入（节省引脚）</td></tr>
+<tr><td>典型应用</td><td>Cache，少量嵌入式系统</td><td>计算机主存（内存条）</td></tr>
+</table>
+
+<h3 class="subsec">内存条演变（DDR 系列）</h3>
+<table>
+<tr><th>代次</th><th>预取位数</th><th>工作电压</th><th>最高频率</th><th>单条最大容量</th></tr>
+<tr><td>SDRAM（SDR）</td><td>1-bit</td><td>3.3V</td><td>133MHz</td><td>256MB</td></tr>
+<tr><td>DDR1</td><td>2-bit</td><td>2.5V</td><td>400MHz</td><td>1GB</td></tr>
+<tr><td>DDR2</td><td>4-bit</td><td>1.8V</td><td>1200MHz</td><td>4GB</td></tr>
+<tr><td>DDR3</td><td>8-bit</td><td>1.5V</td><td>2133MHz</td><td>8GB</td></tr>
+<tr><td>DDR4</td><td>8-bit（+Bank Group）</td><td>1.2V</td><td>4200MHz</td><td>16GB</td></tr>
+<tr><td>DDR5</td><td>双独立32/40-bit通道</td><td>1.1V</td><td>6400MHz</td><td>512GB（理论）</td></tr>
+</table>
+<p style="color:var(--text-muted);font-size:13px">DDR 每代带宽翻倍的原理：SDR→DDR3 靠翻倍预取位数；DDR4 起改用 Bank Group 设计，不再翻倍预取位。</p>
+
+<!-- ════════ SECTION 4 ════════ -->
+<h2 class="sec" id="s4">4. 存储器扩展 <span class="badge hot">⭐⭐⭐ 核心考点</span></h2>
+
+<div class="box key">
+<div class="box-title">🔑 三种扩展方式本质</div>
+<table>
+<tr><th>方式</th><th>目的</th><th>数据线连法</th><th>地址线连法</th><th>片选 CS 连法</th></tr>
+<tr>
+  <td><strong>位扩展</strong></td>
+  <td>增加数据位宽<br>（字数不变）</td>
+  <td>各芯片数据线<br>接总线<span class="hl-red">不同位</span></td>
+  <td>所有芯片地址线<br><span class="hl-blue">并联</span>（完全相同）</td>
+  <td>所有芯片 CS<br><span class="hl-blue">并联</span>（同时选中）</td>
+</tr>
+<tr>
+  <td><strong>字扩展</strong></td>
+  <td>增加寻址范围<br>（位宽不变）</td>
+  <td>各芯片数据线<br><span class="hl-blue">并联</span>（三态隔离）</td>
+  <td>低位地址线并联；<br>高位地址线→<span class="hl-red">译码器</span></td>
+  <td>各芯片 CS 接<br><span class="hl-red">译码器输出</span>（轮流）</td>
+</tr>
+<tr>
+  <td><strong>复合扩展</strong></td>
+  <td>位和字同时扩</td>
+  <td colspan="3">先做位扩展（组合成一组），再对多组做字扩展</td>
+</tr>
+</table>
+</div>
+
+<!-- ── 4.1 位扩展 ── -->
+<h3 class="subsec" id="s4-1">4.1 位扩展（Bit Extension）</h3>
+
+<p><strong>典型例题</strong>：用 8 片 <code>1M×1位</code> 芯片扩展为 <code>1M×8位</code> 的 RAM</p>
+
+<div class="diagram">
+<svg width="760" height="320" viewBox="0 0 760 320">
+  <g stroke="#222" fill="none" stroke-width="1.5">
+    <rect x="170" y="42" width="120" height="108"/>
+    <rect x="330" y="42" width="120" height="108"/>
+    <rect x="550" y="42" width="120" height="108"/>
+  </g>
+
+  <g fill="#111" font-size="12" font-family="Times New Roman" text-anchor="middle">
+    <text x="230" y="24">D₀</text>
+    <text x="390" y="24">D₁</text>
+    <text x="500" y="24">…</text>
+    <text x="610" y="24">D₇</text>
+
+    <text x="230" y="58">I/O</text>
+    <text x="390" y="58">I/O</text>
+    <text x="610" y="58">I/O</text>
+
+    <text x="230" y="84">1M×1</text>
+    <text x="390" y="84">1M×1</text>
+    <text x="610" y="84">1M×1</text>
+
+    <text x="230" y="102">RAM</text>
+    <text x="390" y="102">RAM</text>
+    <text x="610" y="102">RAM</text>
+
+    <text x="230" y="124" font-size="11">A₀A₁...A₁₉ R/W CS</text>
+    <text x="390" y="124" font-size="11">A₀A₁...A₁₉ R/W CS</text>
+    <text x="610" y="124" font-size="11">A₀A₁...A₁₉ R/W CS</text>
+  </g>
+
+  <g stroke="#222" stroke-width="1.3">
+    <line x1="230" y1="28" x2="230" y2="42"/>
+    <line x1="390" y1="28" x2="390" y2="42"/>
+    <line x1="610" y1="28" x2="610" y2="42"/>
+  </g>
+
+  <g stroke="#222" stroke-width="1.2" fill="none">
+    <line x1="82" y1="182" x2="690" y2="182"/>
+    <line x1="82" y1="198" x2="690" y2="198"/>
+    <line x1="82" y1="214" x2="690" y2="214"/>
+    <line x1="82" y1="230" x2="690" y2="230"/>
+    <line x1="82" y1="246" x2="690" y2="246"/>
+  </g>
+
+  <g fill="#111" font-size="11" font-family="Times New Roman" text-anchor="end">
+    <text x="78" y="186">A₀</text>
+    <text x="78" y="202">A₁</text>
+    <text x="78" y="218">A₁₉</text>
+    <text x="78" y="234">R/W#</text>
+    <text x="78" y="250">CS#</text>
+  </g>
+  <text x="95" y="208" fill="#111" font-size="11">…</text>
+
+  <!-- chip 1 taps -->
+  <g stroke="#222" stroke-width="1.2" fill="#222">
+    <line x1="202" y1="150" x2="202" y2="214"/>
+    <circle cx="202" cy="182" r="2.4"/><circle cx="202" cy="198" r="2.4"/><circle cx="202" cy="214" r="2.4"/>
+    <line x1="230" y1="150" x2="230" y2="230"/><circle cx="230" cy="230" r="2.4"/>
+    <line x1="278" y1="150" x2="278" y2="246"/><circle cx="278" cy="246" r="2.4"/>
+  </g>
+  <circle cx="278" cy="150" r="3.2" fill="#fff" stroke="#222" stroke-width="1.2"/>
+
+  <!-- chip 2 taps -->
+  <g stroke="#222" stroke-width="1.2" fill="#222">
+    <line x1="362" y1="150" x2="362" y2="214"/>
+    <circle cx="362" cy="182" r="2.4"/><circle cx="362" cy="198" r="2.4"/><circle cx="362" cy="214" r="2.4"/>
+    <line x1="390" y1="150" x2="390" y2="230"/><circle cx="390" cy="230" r="2.4"/>
+    <line x1="438" y1="150" x2="438" y2="246"/><circle cx="438" cy="246" r="2.4"/>
+  </g>
+  <circle cx="438" cy="150" r="3.2" fill="#fff" stroke="#222" stroke-width="1.2"/>
+
+  <!-- chip 3 taps -->
+  <g stroke="#222" stroke-width="1.2" fill="#222">
+    <line x1="582" y1="150" x2="582" y2="214"/>
+    <circle cx="582" cy="182" r="2.4"/><circle cx="582" cy="198" r="2.4"/><circle cx="582" cy="214" r="2.4"/>
+    <line x1="610" y1="150" x2="610" y2="230"/><circle cx="610" cy="230" r="2.4"/>
+    <line x1="658" y1="150" x2="658" y2="246"/><circle cx="658" cy="246" r="2.4"/>
+  </g>
+  <circle cx="658" cy="150" r="3.2" fill="#fff" stroke="#222" stroke-width="1.2"/>
+
+  <text x="500" y="102" fill="#111" font-size="18">…</text>
+</svg>
+<div class="diagram-caption">图 A：位扩展示意（参考 图3.24）— 8片1M×1位 → 1M×8位</div>
+</div>
+
+<div class="box tip">
+<div class="box-title">✅ 位扩展 — 规则总结</div>
+<ol>
+<li>各芯片只有 1 根（或少量）数据线，分别连接总线的不同位（D₀、D₁…D₇）</li>
+<li>所有芯片地址线 A₀～Aₙ <strong>完全并联</strong>，接相同的 CPU 地址线</li>
+<li>所有芯片 <strong>CS# 并联</strong>，R/W# 并联，同时被选中</li>
+<li>结果：每个地址对应的 8 个芯片<strong>同时工作</strong>，合并输出 8 位数据</li>
+</ol>
+</div>
+
+<!-- ── 4.2 字扩展 ── -->
+<h3 class="subsec" id="s4-2">4.2 字扩展（Word Extension）</h3>
+
+<p><strong>典型例题</strong>：用 4 片 <code>256K×8位</code> 芯片扩展为 <code>1M×8位</code> 的 RAM</p>
+<p style="color:var(--text-muted);font-size:13px">分析：目标1M = 4 × 256K → 字数×4，位宽不变（8位）→ 纯字扩展</p>
+
+<div class="diagram">
+<svg width="820" height="350" viewBox="0 0 820 350">
+  <defs>
+    <marker id="arrow-b" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8" fill="#222"/>
+    </marker>
+    <marker id="arrow-bs" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto">
+      <path d="M8,0 L0,4 L8,8" fill="#222"/>
+    </marker>
+  </defs>
+
+  <line x1="170" y1="54" x2="730" y2="54" stroke="#222" stroke-width="1.3" marker-start="url(#arrow-bs)" marker-end="url(#arrow-b)"/>
+  <text x="156" y="44" fill="#111" font-size="11" font-family="Times New Roman">D₇...D₀</text>
+
+  <g stroke="#222" fill="none" stroke-width="1.4">
+    <rect x="170" y="78" width="120" height="86"/>
+    <rect x="300" y="78" width="120" height="86"/>
+    <rect x="430" y="78" width="120" height="86"/>
+    <rect x="560" y="78" width="120" height="86"/>
+  </g>
+
+  <g fill="#111" font-size="11" text-anchor="middle" font-family="Times New Roman">
+    <text x="230" y="72">D₇...D₀</text><text x="360" y="72">D₇...D₀</text><text x="490" y="72">D₇...D₀</text><text x="620" y="72">D₇...D₀</text>
+    <text x="230" y="106">256K×8位</text><text x="360" y="106">256K×8位</text><text x="490" y="106">256K×8位</text><text x="620" y="106">256K×8位</text>
+    <text x="230" y="124">RAM</text><text x="360" y="124">RAM</text><text x="490" y="124">RAM</text><text x="620" y="124">RAM</text>
+    <text x="230" y="145" font-size="10">A₀A₁...A₁₇ R/W CS</text>
+    <text x="360" y="145" font-size="10">A₀A₁...A₁₇ R/W CS</text>
+    <text x="490" y="145" font-size="10">A₀A₁...A₁₇ R/W CS</text>
+    <text x="620" y="145" font-size="10">A₀A₁...A₁₇ R/W CS</text>
+  </g>
+
+  <g stroke="#222" stroke-width="1.2" fill="none">
+    <line x1="230" y1="54" x2="230" y2="78" marker-start="url(#arrow-bs)" marker-end="url(#arrow-b)"/>
+    <line x1="360" y1="54" x2="360" y2="78" marker-start="url(#arrow-bs)" marker-end="url(#arrow-b)"/>
+    <line x1="490" y1="54" x2="490" y2="78" marker-start="url(#arrow-bs)" marker-end="url(#arrow-b)"/>
+    <line x1="620" y1="54" x2="620" y2="78" marker-start="url(#arrow-bs)" marker-end="url(#arrow-b)"/>
+  </g>
+
+  <g stroke="#222" stroke-width="1.2" fill="none">
+    <line x1="88" y1="192" x2="740" y2="192"/>
+    <line x1="88" y1="208" x2="740" y2="208"/>
+    <line x1="88" y1="238" x2="740" y2="238"/>
+    <line x1="88" y1="254" x2="740" y2="254"/>
+    <line x1="88" y1="286" x2="120" y2="286"/>
+    <line x1="88" y1="302" x2="120" y2="302"/>
+  </g>
+
+  <g fill="#111" font-size="11" text-anchor="end" font-family="Times New Roman">
+    <text x="84" y="196">A₀</text>
+    <text x="84" y="212">A₁</text>
+    <text x="84" y="226">…</text>
+    <text x="84" y="242">A₁₇</text>
+    <text x="84" y="258">R/W#</text>
+    <text x="84" y="290">A₁₈</text>
+    <text x="84" y="306">A₁₉</text>
+  </g>
+
+  <!-- Decoder -->
+  <rect x="120" y="270" width="58" height="50" fill="none" stroke="#222" stroke-width="1.3"/>
+  <text x="149" y="291" fill="#111" font-size="10" text-anchor="middle">2-4译</text>
+  <text x="149" y="305" fill="#111" font-size="10" text-anchor="middle">码器</text>
+
+  <!-- taps for each chip -->
+  <g stroke="#222" stroke-width="1.2" fill="#222">
+    <line x1="198" y1="164" x2="198" y2="238"/>
+    <circle cx="198" cy="192" r="2.2"/><circle cx="198" cy="208" r="2.2"/><circle cx="198" cy="238" r="2.2"/>
+    <line x1="238" y1="164" x2="238" y2="254"/><circle cx="238" cy="254" r="2.2"/>
+    <line x1="278" y1="164" x2="278" y2="174"/>
+
+    <line x1="328" y1="164" x2="328" y2="238"/>
+    <circle cx="328" cy="192" r="2.2"/><circle cx="328" cy="208" r="2.2"/><circle cx="328" cy="238" r="2.2"/>
+    <line x1="368" y1="164" x2="368" y2="254"/><circle cx="368" cy="254" r="2.2"/>
+    <line x1="408" y1="164" x2="408" y2="174"/>
+
+    <line x1="458" y1="164" x2="458" y2="238"/>
+    <circle cx="458" cy="192" r="2.2"/><circle cx="458" cy="208" r="2.2"/><circle cx="458" cy="238" r="2.2"/>
+    <line x1="498" y1="164" x2="498" y2="254"/><circle cx="498" cy="254" r="2.2"/>
+    <line x1="538" y1="164" x2="538" y2="174"/>
+
+    <line x1="588" y1="164" x2="588" y2="238"/>
+    <circle cx="588" cy="192" r="2.2"/><circle cx="588" cy="208" r="2.2"/><circle cx="588" cy="238" r="2.2"/>
+    <line x1="628" y1="164" x2="628" y2="254"/><circle cx="628" cy="254" r="2.2"/>
+    <line x1="668" y1="164" x2="668" y2="174"/>
+  </g>
+
+  <g fill="#fff" stroke="#222" stroke-width="1.2">
+    <circle cx="278" cy="164" r="3"/>
+    <circle cx="408" cy="164" r="3"/>
+    <circle cx="538" cy="164" r="3"/>
+    <circle cx="668" cy="164" r="3"/>
+  </g>
+
+  <!-- decoder outputs to CS pins -->
+  <g stroke="#222" stroke-width="1.2" fill="none">
+    <polyline points="178,278 278,278 278,164"/>
+    <polyline points="178,290 408,290 408,164"/>
+    <polyline points="178,302 538,302 538,164"/>
+    <polyline points="178,314 668,314 668,164"/>
+  </g>
+</svg>
+<div class="diagram-caption">图 B：字扩展示意（参考 图3.25）— 4片256K×8位 → 1M×8位</div>
+</div>
+
+<div class="box tip">
+<div class="box-title">✅ 字扩展 — 规则总结</div>
+<ol>
+<li>各芯片数据线 D₇~D₀ <strong>并联</strong>到数据总线（同一时刻只有一片 CS 有效，其余三态高阻）</li>
+<li>低位地址线（片内地址）并联接所有芯片</li>
+<li><mark>高位地址线接译码器</mark>，译码器输出的各信号分别接不同芯片的 CS#</li>
+<li>R/W# 并联</li>
+<li>n 位高位地址线 → 2ⁿ 个芯片选择信号（即可扩展 2ⁿ 倍字数）</li>
+</ol>
+</div>
+
+<!-- ── 4.3 复合扩展 ── -->
+<h3 class="subsec" id="s4-3">4.3 复合扩展（Composite Extension）</h3>
+
+<p>当芯片位宽和字数均不足时，先做<strong>位扩展</strong>组成一个"基本单元"，再对多个基本单元做<strong>字扩展</strong>。</p>
+
+<div class="box warn">
+<div class="box-title">📐 题3.27 示例：4片 4K×8位 → 8K×16位</div>
+
+<div class="steps">
+<div class="step"><div class="step-num">1</div><div class="step-body">
+<strong>分析需求</strong>：目标 8K×16位。芯片 4K×8位。<br>
+字数需扩展：8K / 4K = <span class="hl-gold">2倍</span>（需字扩展，用2组）<br>
+位宽需扩展：16位 / 8位 = <span class="hl-blue">2倍</span>（每组需2片位扩展）<br>
+共需：2组 × 2片/组 = 4片 ✓
+</div></div>
+
+<div class="step"><div class="step-num">2</div><div class="step-body">
+<strong>位扩展</strong>：每组2片 4K×8位 → 4K×16位<br>
+• 片1：D₁₅~D₈（高8位）<br>
+• 片2：D₇~D₀（低8位）<br>
+• 两片地址线并联（A₀~A₁₁），同一 CS 信号控制
+</div></div>
+
+<div class="step"><div class="step-num">3</div><div class="step-body">
+<strong>字扩展</strong>：2组 4K×16位 → 8K×16位<br>
+• A₁₂ 通过译码电路控制各组 CS#<br>
+• <code>A₁₂=0</code> → 左组（#0, #1）选中，地址区间 0x0000~0x0FFF<br>
+• <code>A₁₂=1</code> → 右组（#2, #3）选中，地址区间 0x1000~0x1FFF<br>
+• 外部总 CS 信号与 A₁₂ 送入译码器，译码输出控制各组片选
+</div></div>
+</div>
+</div>
+
+<div class="diagram">
+<svg width="860" height="340" viewBox="0 0 860 340">
+  <g stroke="#d94841" fill="none" stroke-width="2">
+    <rect x="120" y="78" width="130" height="64"/>
+    <rect x="300" y="78" width="130" height="64"/>
+    <rect x="530" y="78" width="130" height="64"/>
+    <rect x="710" y="78" width="130" height="64"/>
+  </g>
+
+  <g fill="#d94841" font-size="16" text-anchor="middle" font-family="KaiTi">
+    <text x="185" y="36">D₁₅～D₈</text>
+    <text x="365" y="36">D₇～D₀</text>
+    <text x="595" y="36">D₁₅～D₈</text>
+    <text x="775" y="36">D₇～D₀</text>
+    <text x="185" y="58">⇅</text><text x="365" y="58">⇅</text><text x="595" y="58">⇅</text><text x="775" y="58">⇅</text>
+  </g>
+
+  <g fill="#d94841" font-size="11" text-anchor="middle" font-family="JetBrains Mono">
+    <text x="185" y="95">D₀～D₇</text><text x="365" y="95">D₀～D₇</text><text x="595" y="95">D₀～D₇</text><text x="775" y="95">D₀～D₇</text>
+    <text x="185" y="114">4K×8位</text><text x="365" y="114">4K×8位</text><text x="595" y="114">4K×8位</text><text x="775" y="114">4K×8位</text>
+    <text x="185" y="134">A₀...A₁₁  R/W#  CS</text>
+    <text x="365" y="134">A₀...A₁₁  R/W#  CS</text>
+    <text x="595" y="134">A₀...A₁₁  R/W#  CS</text>
+    <text x="775" y="134">A₀...A₁₁  R/W#  CS</text>
+  </g>
+
+  <line x1="480" y1="30" x2="480" y2="260" stroke="#d94841" stroke-width="2" stroke-dasharray="10,10"/>
+
+  <g stroke="#d94841" stroke-width="2" fill="none">
+    <line x1="70" y1="160" x2="840" y2="160"/>
+    <line x1="70" y1="188" x2="840" y2="188"/>
+    <line x1="70" y1="216" x2="840" y2="216"/>
+  </g>
+  <g fill="#d94841" font-size="12" text-anchor="end" font-family="JetBrains Mono">
+    <text x="64" y="164">A₀</text>
+    <text x="64" y="178">⋮</text>
+    <text x="64" y="192">A₁₁</text>
+    <text x="64" y="220">R/W#</text>
+  </g>
+
+  <!-- chip taps for A and R/W -->
+  <g stroke="#d94841" stroke-width="2" fill="#d94841">
+    <line x1="155" y1="142" x2="155" y2="188"/><circle cx="155" cy="160" r="3"/><circle cx="155" cy="188" r="3"/>
+    <line x1="205" y1="142" x2="205" y2="216"/><circle cx="205" cy="216" r="3"/>
+
+    <line x1="335" y1="142" x2="335" y2="188"/><circle cx="335" cy="160" r="3"/><circle cx="335" cy="188" r="3"/>
+    <line x1="385" y1="142" x2="385" y2="216"/><circle cx="385" cy="216" r="3"/>
+
+    <line x1="565" y1="142" x2="565" y2="188"/><circle cx="565" cy="160" r="3"/><circle cx="565" cy="188" r="3"/>
+    <line x1="615" y1="142" x2="615" y2="216"/><circle cx="615" cy="216" r="3"/>
+
+    <line x1="745" y1="142" x2="745" y2="188"/><circle cx="745" cy="160" r="3"/><circle cx="745" cy="188" r="3"/>
+    <line x1="795" y1="142" x2="795" y2="216"/><circle cx="795" cy="216" r="3"/>
+  </g>
+
+  <!-- CS pins on chips -->
+  <g fill="#fff" stroke="#d94841" stroke-width="2">
+    <circle cx="250" cy="142" r="3.5"/>
+    <circle cx="430" cy="142" r="3.5"/>
+    <circle cx="660" cy="142" r="3.5"/>
+    <circle cx="840" cy="142" r="3.5"/>
+  </g>
+
+  <!-- A12 / CS to decoder -->
+  <g stroke="#d94841" stroke-width="2" fill="none">
+    <line x1="24" y1="256" x2="130" y2="256"/>
+    <line x1="24" y1="286" x2="130" y2="286"/>
+
+    <rect x="130" y="242" width="72" height="60"/>
+
+    <line x1="202" y1="262" x2="430" y2="262"/>
+    <line x1="202" y1="292" x2="840" y2="292"/>
+  </g>
+  <g fill="#d94841" font-size="13" font-family="JetBrains Mono">
+    <text x="18" y="260">A₁₂</text>
+    <text x="18" y="290">CS</text>
+    <text x="166" y="263" text-anchor="middle">1-2</text>
+    <text x="166" y="280" text-anchor="middle">译码器</text>
+    <text x="205" y="259" font-size="10">CS₀</text>
+    <text x="205" y="289" font-size="10">CS₁</text>
+  </g>
+
+  <!-- CS routing to groups -->
+  <g stroke="#d94841" stroke-width="2" fill="#d94841">
+    <line x1="250" y1="142" x2="250" y2="262"/><circle cx="250" cy="262" r="3"/>
+    <line x1="430" y1="142" x2="430" y2="262"/><circle cx="430" cy="262" r="3"/>
+    <line x1="660" y1="142" x2="660" y2="292"/><circle cx="660" cy="292" r="3"/>
+    <line x1="840" y1="142" x2="840" y2="292"/><circle cx="840" cy="292" r="3"/>
+  </g>
+</svg>
+<div class="diagram-caption">图 C：题3.27 复合扩展电路示意图 — 4片4K×8位 → 8K×16位</div>
+</div>
+
+<!-- ════════ SECTION 5 ════════ -->
+<h2 class="sec" id="s5">5. Cache 地址映射与转换 <span class="badge hot">⭐⭐⭐ 核心考点</span></h2>
+
+<div class="box">
+<div class="box-title">前置知识：Cache 行（Cache Line）结构</div>
+<table>
+<tr><th>字段</th><th>用途</th><th>备注</th></tr>
+<tr><td><strong>数据字段</strong></td><td>存储从主存复制的数据块</td><td>典型大小 32B 或 64B</td></tr>
+<tr><td><strong>Tag（标记）</strong></td><td>记录该块在主存中的位置信息</td><td>用相联存储器实现（全相联/组相联）</td></tr>
+<tr><td><strong>有效位（Valid）</strong></td><td>指示此行数据是否有效</td><td>1 bit</td></tr>
+<tr><td><strong>脏位（Dirty）</strong></td><td>标记数据被 CPU 修改但未回写主存</td><td>写回法（Write Back）才有</td></tr>
+<tr><td><strong>替换控制位</strong></td><td>供替换算法使用（如 LRU 计数器）</td><td>位数由算法和路数决定</td></tr>
+</table>
+</div>
+
+<!-- ── 5.1 全相联 ── -->
+<h3 class="subsec" id="s5-1">5.1 全相联映射（Full Associative）</h3>
+
+<div class="box key">
+<div class="box-title">核心规则</div>
+<p>主存<strong>任意块</strong>可映射到 Cache <strong>任意块</strong>。需要块表（相联存储器）记录全部映射关系。</p>
+</div>
+
+<h4 class="point">地址格式</h4>
+<div class="formula">主存地址 = [ M位：块号 | W位：块内地址 ]</div>
+<div class="formula">Tag = 全部 M 位（主存块号）</div>
+
+<div class="box">
+<div class="box-title">地址转换过程</div>
+<div class="steps">
+<div class="step"><div class="step-num">①</div><div class="step-body">CPU 给出主存地址，提取 <strong>M位块号</strong></div></div>
+<div class="step"><div class="step-num">②</div><div class="step-body">在<strong>相联存储器（块表）</strong>中查找是否存在此块号</div></div>
+<div class="step"><div class="step-num">③</div><div class="step-body">若命中（Hit）：取出对应 Cache 块号 C，拼接块内地址 W → Cache 地址</div></div>
+<div class="step"><div class="step-num">④</div><div class="step-body">若未命中（Miss）：从主存读取，同时将整块调入 Cache 某个空闲位置</div></div>
+</div>
+</div>
+
+<p><span class="good">优点</span>：命中率高，Cache 利用率高；<span class="bad">缺点</span>：每次需与全部 Cache 块比较，电路复杂，仅适用小容量 Cache</p>
+
+<!-- ── 5.2 直接相联 ── -->
+<h3 class="subsec" id="s5-2">5.2 直接相联映射（Direct Mapping）</h3>
+
+<div class="box key">
+<div class="box-title">核心规则</div>
+<p>将主存按 Cache 大小分页，<strong>页内相同块号</strong>的主存块只能映射到 Cache 中<strong>相同块号</strong>的位置。</p>
+<p>映射关系：<code>Cache块号 i = 主存块号 j mod 2<sup>C</sup></code></p>
+</div>
+
+<h4 class="point">地址格式（关键！）</h4>
+<div class="formula">主存地址 = [ T位：页号 | C位：块号（=Cache块号） | W位：块内地址 ]</div>
+<div class="formula">Tag = 页号 T 位（存放在对应 Cache 块的标记字段中）</div>
+
+<p>其中：
+<code>C = log₂(Cache总块数)</code>，
+<code>W = log₂(块大小/字节)</code>，
+<code>T = 总地址位数 - C - W</code>
+</p>
+
+<div class="box">
+<div class="box-title">地址转换过程</div>
+<div class="steps">
+<div class="step"><div class="step-num">①</div><div class="step-body">从主存地址提取 <strong>C位（块号）</strong>，直接定位到 Cache 第 C 块</div></div>
+<div class="step"><div class="step-num">②</div><div class="step-body">读取该 Cache 块的 <strong>Tag</strong>，与主存地址的 <strong>T（页号）</strong> 比较</div></div>
+<div class="step"><div class="step-num">③</div><div class="step-body">相符 → 命中，用块内地址 W 访问 Cache；不符 → 未命中，去主存取数并替换该 Cache 块</div></div>
+</div>
+</div>
+
+<p><span class="good">优点</span>：硬件简单，仅需 1 次比较；<span class="bad">缺点</span>：不同页内同块号的块竞争同一 Cache 位置，冲突多，命中率低</p>
+
+<!-- ── 5.3 组相联 ── -->
+<h3 class="subsec" id="s5-3">5.3 组相联映射（Set-Associative）<span class="badge hot">最常用</span></h3>
+
+<div class="box key">
+<div class="box-title">核心规则（折中方案）</div>
+<p>Cache 分成 2<sup>u</sup> 组，每组 2<sup>v</sup> 块（称为 2<sup>v</sup> 路组相联）。<br>
+主存块 → Cache 的<strong>组</strong>采用直接映射（组号固定）；组内各块采用<strong>全相联</strong>（任意位置）。</p>
+</div>
+
+<h4 class="point">地址格式（关键！）</h4>
+<div class="formula">主存地址 = [ s位：页号 | u位：页内块号（=Cache组号） | W位：块内地址 ]</div>
+<div class="formula">Tag = 页号 s 位</div>
+
+<p>其中：
+<code>u = log₂(Cache组数)</code>，
+<code>v = log₂(每组块数) = log₂(路数)</code>，
+<code>W = log₂(块大小)</code>，
+<code>s = 总地址位 - u - W</code>
+</p>
+
+<div class="box">
+<div class="box-title">地址转换过程</div>
+<div class="steps">
+<div class="step"><div class="step-num">①</div><div class="step-body">从主存地址提取 <strong>u位组号</strong>，定位到对应的 Cache 组</div></div>
+<div class="step"><div class="step-num">②</div><div class="step-body">在该组的所有 2<sup>v</sup> 个块中，用<strong>相联存储器并行比较</strong>各块 Tag 与主存地址的 s 位页号</div></div>
+<div class="step"><div class="step-num">③</div><div class="step-body">匹配成功 → 命中，取出对应块的 v 位块内编号，与 u、W 拼成 Cache 地址</div></div>
+<div class="step"><div class="step-num">④</div><div class="step-body">无匹配 → 未命中，从主存调入，按替换策略（LRU）选择组内一块替换</div></div>
+</div>
+</div>
+
+<!-- ── 5.4 对比 ── -->
+<h3 class="subsec" id="s5-4">5.4 三种映射方式终极对比 <span class="badge hot">必考</span></h3>
+
+<table>
+<tr>
+  <th>对比维度</th>
+  <th>全相联</th>
+  <th>直接相联</th>
+  <th>组相联（k路）</th>
+</tr>
+<tr>
+  <td><strong>主存地址格式</strong></td>
+  <td><code>[M | W]</code></td>
+  <td><code>[T | C | W]</code></td>
+  <td><code>[s | u | W]</code></td>
+</tr>
+<tr>
+  <td><strong>Tag 含义</strong></td>
+  <td>全部块号（M位）</td>
+  <td>页号（T位）</td>
+  <td>页号（s位）</td>
+</tr>
+<tr>
+  <td><strong>Tag 位数</strong></td>
+  <td>最多（M位）</td>
+  <td>适中（T位）</td>
+  <td>最少（s位）</td>
+</tr>
+<tr>
+  <td><strong>比较次数</strong></td>
+  <td>与所有块比较（最多）</td>
+  <td>只比较 1 次（最少）</td>
+  <td>与组内 k 块比较</td>
+</tr>
+<tr>
+  <td><strong>是否用相联存储器</strong></td>
+  <td>是（大）</td>
+  <td>否（普通比较器）</td>
+  <td>是（小，仅组内）</td>
+</tr>
+<tr>
+  <td><strong>命中率</strong></td>
+  <td><span class="good">高</span></td>
+  <td><span class="bad">低（冲突多）</span></td>
+  <td><span class="good">较高</span></td>
+</tr>
+<tr>
+  <td><strong>硬件复杂度</strong></td>
+  <td><span class="bad">高</span></td>
+  <td><span class="good">低</span></td>
+  <td><span class="mid">中</span></td>
+</tr>
+<tr>
+  <td><strong>实际应用</strong></td>
+  <td>极小容量TLB</td>
+  <td>少</td>
+  <td><span class="good">现代CPU主流（8路、16路）</span></td>
+</tr>
+</table>
+
+<div class="box warn">
+<div class="box-title">⚠ 特殊关系</div>
+组相联是通用形式，两者是其极端情况：<br>
+• 全相联 = 整个Cache作为1个组（u=0，v=C）<br>
+• 直接映射 = 每组只有1块（u=C，v=0）
+</div>
+
+<div class="diagram">
+<svg width="600" height="100" viewBox="0 0 600 100">
+  <!-- Full assoc -->
+  <rect x="10" y="20" width="120" height="60" rx="6" fill="#13183a" stroke="#5b8dee" stroke-width="2"/>
+  <text x="70" y="45" fill="#5b8dee" font-size="11" text-anchor="middle" font-family="Noto Serif SC">全相联</text>
+  <text x="70" y="62" fill="#8b92b8" font-size="10" text-anchor="middle">主存块号M</text>
+  <rect x="20" y="68" width="100" height="8" rx="2" fill="#5b8dee" opacity="0.7"/>
+  <text x="70" y="76" fill="#fff" font-size="8" text-anchor="middle">← Tag(M位) →</text>
+
+  <!-- Direct map -->
+  <rect x="230" y="20" width="140" height="60" rx="6" fill="#1e1800" stroke="#e8a838" stroke-width="2"/>
+  <text x="300" y="45" fill="#e8a838" font-size="11" text-anchor="middle" font-family="Noto Serif SC">直接相联</text>
+  <rect x="240" y="58" width="65" height="14" rx="2" fill="#e8a838" opacity="0.8"/>
+  <text x="273" y="69" fill="#000" font-size="8" text-anchor="middle">Tag(T位)</text>
+  <rect x="306" y="58" width="35" height="14" rx="2" fill="#4ecb71" opacity="0.8"/>
+  <text x="324" y="69" fill="#000" font-size="8" text-anchor="middle">C位</text>
+  <rect x="342" y="58" width="23" height="14" rx="2" fill="#8b92b8" opacity="0.8"/>
+  <text x="354" y="69" fill="#fff" font-size="8" text-anchor="middle">W</text>
+
+  <!-- Set assoc -->
+  <rect x="460" y="20" width="130" height="60" rx="6" fill="#0f1f14" stroke="#4ecb71" stroke-width="2"/>
+  <text x="525" y="45" fill="#4ecb71" font-size="11" text-anchor="middle" font-family="Noto Serif SC">组相联</text>
+  <rect x="470" y="58" width="55" height="14" rx="2" fill="#5b8dee" opacity="0.8"/>
+  <text x="497" y="69" fill="#fff" font-size="8" text-anchor="middle">Tag(s位)</text>
+  <rect x="526" y="58" width="30" height="14" rx="2" fill="#e05c7a" opacity="0.8"/>
+  <text x="541" y="69" fill="#fff" font-size="8" text-anchor="middle">u位</text>
+  <rect x="557" y="58" width="24" height="14" rx="2" fill="#8b92b8" opacity="0.8"/>
+  <text x="569" y="69" fill="#fff" font-size="8" text-anchor="middle">W</text>
+
+  <!-- Arrows showing relationship -->
+  <line x1="140" y1="50" x2="220" y2="50" stroke="#8b92b8" stroke-width="1.5"/>
+  <text x="180" y="44" fill="#8b92b8" font-size="9" text-anchor="middle">u=0极端</text>
+  <line x1="380" y1="50" x2="450" y2="50" stroke="#8b92b8" stroke-width="1.5"/>
+  <text x="415" y="44" fill="#8b92b8" font-size="9" text-anchor="middle">v=0极端</text>
+  <text x="300" y="100" fill="#e8a838" font-size="11" text-anchor="middle">↑ 组相联为通用形式，上两者是特殊情况</text>
+</svg>
+<div class="diagram-caption">图 D：三种映射方式主存地址划分对比</div>
+</div>
+
+<!-- ── 5.5 替换与写策略 ── -->
+<h3 class="subsec" id="s5-5">5.5 替换策略 & 写入策略</h3>
+
+<h4 class="point">替换策略（需全相联/组相联才有选择问题）</h4>
+<table>
+<tr><th>策略</th><th>原则</th><th>优点</th><th>缺点</th></tr>
+<tr>
+  <td>随机（Random）</td><td>随机选一块替换</td>
+  <td>硬件简单</td><td>被换出的块可能马上需要</td>
+</tr>
+<tr>
+  <td>LFU（最不经常使用）</td><td>替换访问次数最少的块</td>
+  <td>考虑历史频率</td><td>新调入的块易被替换（次数为0）</td>
+</tr>
+<tr>
+  <td>FIFO（先进先出）</td><td>替换最先调入的块</td>
+  <td>实现简单</td><td>常用块可能先进而被替换</td>
+</tr>
+<tr>
+  <td><strong>LRU（近期最少使用）</strong></td><td>替换最长时间未被访问的块</td>
+  <td><span class="good">命中率最高，最合理</span></td><td>需计数器，稍复杂</td>
+</tr>
+</table>
+
+<div class="box tip">
+<div class="box-title">💡 LRU 计数器位数</div>
+k 路组相联 → 需要区分 k 块的使用顺序 → <strong>LRU 位数 = ⌈log₂(k)⌉</strong><br>
+例：8路组相联 → LRU 位 = 3位（可编码 0~7）
+</div>
+
+<h4 class="point">写入策略</h4>
+<div class="compare-grid">
+<div class="box">
+<strong style="color:var(--accent)">写通法（Write Through）</strong>
+<ul>
+<li>CPU 写数据同时写 Cache <strong>和</strong>主存</li>
+<li><span class="good">简单，Cache 与主存始终一致</span></li>
+<li><span class="bad">每次写都要访问慢速主存，降低写速度</span></li>
+<li>无需脏位（Dirty Bit）</li>
+</ul>
+</div>
+<div class="box">
+<strong style="color:var(--accent3)">写回法（Write Back）</strong>
+<ul>
+<li>CPU 写数据只写 Cache，设置<strong>脏位=1</strong></li>
+<li>仅当该块被替换时，才把修改的数据写回主存</li>
+<li><span class="good">减少主存访问次数，写速度快</span></li>
+<li><span class="bad">Cache 与主存可能不一致，有一致性隐患</span></li>
+</ul>
+</div>
+</div>
+
+<!-- ════════ SECTION 6 ════════ -->
+<h2 class="sec" id="s6">6. 虚拟存储器（概要）</h2>
+
+<table>
+<tr><th>管理方式</th><th>块的大小</th><th>地址组成</th><th>地址映射表</th><th>优点</th><th>缺点</th></tr>
+<tr>
+  <td><strong>段式</strong></td><td>不定长（按逻辑段）</td>
+  <td>段号 S + 段内偏移 D</td><td>段表（段号、段长、起始地址、装入位、访问方式）</td>
+  <td>符合程序逻辑，易保护/共享</td>
+  <td>段间碎片，大段换入耗时</td>
+</tr>
+<tr>
+  <td><strong>页式</strong></td><td>定长（4KB 等）</td>
+  <td>虚页号 P + 页内偏移 D</td><td>页表（页号、实页号、装入位、修改位）+ TLB 快表</td>
+  <td>碎片小，大多数OS采用</td>
+  <td>不符合程序模块，保护共享不便</td>
+</tr>
+<tr>
+  <td><strong>段页式</strong></td><td>段内分页（定长）</td>
+  <td>段号 S + 虚页号 P + 页内偏移 D</td><td>段表 + 页表（两级查表）</td>
+  <td>兼顾两者优点</td>
+  <td>地址变换需三次内存访问</td>
+</tr>
+</table>
+
+<div class="box tip">
+<div class="box-title">💡 TLB（快表）</div>
+页式管理中，每次访存需先查页表（位于主存），会使访存次数加倍。TLB 是对<strong>最活跃页表项</strong>的专用 Cache（相联存储器实现），硬件高速检索，避免频繁查主存中的慢表。
+</div>
+
+<div class="box">
+<div class="box-title">Cache vs 虚拟存储器 — 异同</div>
+<table>
+<tr><th>维度</th><th>Cache</th><th>虚拟存储器</th></tr>
+<tr><td>层次</td><td>主存 ↔ Cache（SRAM）</td><td>外存（磁盘）↔ 主存（DRAM）</td></tr>
+<tr><td>块大小</td><td>定长（32/64B）</td><td>定长（页式4KB）或不定长（段式）</td></tr>
+<tr><td>未命中代价</td><td>低（ns级）</td><td>极高（ms级，性能损失100~1000倍）</td></tr>
+<tr><td>管理方式</td><td>纯硬件，对所有程序员透明</td><td>OS软件+硬件共同完成</td></tr>
+<tr><td>共同点</td><td colspan="2">均利用局部性原理，均需地址转换，均可提升系统性能</td></tr>
+</table>
+</div>
+
+<hr>
+
+<!-- ════════ 习题 ════════ -->
+<h2 class="sec" id="s_prob">📝 习题精解</h2>
+
+<!-- ── 题3.20 ── -->
+<div class="box problem" id="p320">
+<div class="box-title">题 3.20 — 直接相联映射地址转换</div>
+<p>某计算机按字节编址，主存容量 <strong>1MB</strong>，Cache 容量 <strong>16KB</strong>，Cache 和主存间交换的块大小为 <strong>64B</strong>，采用<strong>直接相联映射</strong>。</p>
+<p>（1）Cache 共有多少个字块？<br>（2）主存地址为 <code>02021H</code> 的单元装入 Cache 后对应的 Cache 地址？<br>（3）该单元存放在 Cache 第几字块？</p>
+</div>
+
+<details><summary>查看完整解题过程 + 步骤模板</summary>
+<div class="ans">
+
+<h4 class="point">【步骤模板 — 直接相联映射地址分析】</h4>
+<div class="steps">
+<div class="step"><div class="step-num">1</div><div class="step-body">
+<strong>确定各段位数</strong>
+<div class="formula">W = log₂(块大小) = log₂(64) = 6 位（块内地址）</div>
+<div class="formula">C = log₂(Cache总块数) = log₂(Cache容量/块大小)</div>
+<div class="formula">T = 总地址位数 - C - W（主存页号）</div>
+</div></div>
+<div class="step"><div class="step-num">2</div><div class="step-body">
+<strong>将目标地址转为二进制，按 [T|C|W] 划分</strong>
+</div></div>
+<div class="step"><div class="step-num">3</div><div class="step-body">
+<strong>Cache 块号 = C 字段的值（直接对应）</strong>；Tag = T 字段
+</div></div>
+<div class="step"><div class="step-num">4</div><div class="step-body">
+<strong>Cache 地址 = [Cache块号(C位) | 块内地址W(W位)]</strong>
+</div></div>
+</div>
+
+<hr>
+
+<h4 class="point">题目详解</h4>
+
+<p><strong>（1）Cache 总块数</strong></p>
+<div class="formula">Cache块数 = 16KB / 64B = 16×1024 / 64 = 256 块</div>
+
+<p><strong>地址位数划分</strong></p>
+<table>
+<tr><th>字段</th><th>计算</th><th>位数</th></tr>
+<tr><td>主存总地址位</td><td>log₂(1MB) = log₂(2²⁰)</td><td>20位</td></tr>
+<tr><td>块内地址 W</td><td>log₂(64B)</td><td>6位</td></tr>
+<tr><td>Cache块号 C</td><td>log₂(256块)</td><td>8位</td></tr>
+<tr><td>主存页号 T</td><td>20 - 8 - 6</td><td>6位</td></tr>
+</table>
+<div class="formula">主存地址格式：[ T:6位 | C:8位 | W:6位 ]</div>
+
+<p><strong>（2）地址 <code>02021H</code> 的分析</strong></p>
+<div class="formula">02021H = 0000 0010 0000 0010 0001 B（20位）</div>
+<table>
+<tr><th>字段</th><th>二进制值</th><th>十六/十进制</th></tr>
+<tr><td>T（高6位）</td><td>000000</td><td>0x00</td></tr>
+<tr><td>C（中8位）</td><td>10000000</td><td>0x80 = 128</td></tr>
+<tr><td>W（低6位）td><td>100001</td><td>0x21 = 33</td></tr>
+</table>
+
+<div class="box tip" style="margin:12px 0">
+<div class="box-title">详细二进制拆分</div>
+<span class="addr">
+02021H = 0000 0010 0000 0010 0001 B<br>
+　　　　 |T:000000|C:10000000|W:100001|<br>
+　　　　  = T=0, C=0x80(=128), W=33
+</span>
+</div>
+
+<p>Cache 地址 = [C | W] = <code>[10000000 | 100001]</code></p>
+<div class="formula">Cache 地址 = 1000 0000 1000 01B = 2021H</div>
+
+<p><strong>（3）存放在第几字块</strong></p>
+<div class="formula">Cache 块号 = C字段 = 128（即第 128 块，从第0块计数）</div>
+</div></details>
+
+<!-- ── 题3.21 ── -->
+<div class="box problem" id="p321">
+<div class="box-title">题 3.21 — 8路组相联映射地址分析</div>
+<p>条件同 3.20（主存1MB，Cache 16KB，块 64B），改为采用 <strong>8路组相联映射</strong>。</p>
+<p>（1）主存地址中 s、u、W 各占多少位？<br>（2）地址 <code>02021H</code> 的单元在 Cache 第几组？<br>（3）Cache line 的 Tag 字段占多少位？</p>
+</div>
+
+<details><summary>查看完整解题过程 + 步骤模板</summary>
+<div class="ans">
+
+<h4 class="point">【步骤模板 — 组相联映射地址分析】</h4>
+<div class="steps">
+<div class="step"><div class="step-num">1</div><div class="step-body">
+<div class="formula">W = log₂(块大小字节数)　u = log₂(Cache组数)　s = 总位数 - u - W</div>
+其中 Cache组数 = Cache总块数 / 每组块数（路数）
+</div></div>
+<div class="step"><div class="step-num">2</div><div class="step-body">将地址转二进制，按 [s | u | W] 划分，<strong>u字段即为组号</strong></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-body"><strong>Tag = s 位</strong>（页号字段）；LRU位 = ⌈log₂(路数)⌉</div></div>
+</div>
+
+<hr>
+
+<h4 class="point">题目详解</h4>
+
+<table>
+<tr><th>参数</th><th>计算</th><th>值</th></tr>
+<tr><td>Cache 总块数</td><td>16KB / 64B</td><td>256 块</td></tr>
+<tr><td>每组块数（8路）</td><td>8路 = 每组8块</td><td>8 块/组</td></tr>
+<tr><td>Cache 组数</td><td>256 / 8</td><td>32 组</td></tr>
+<tr><td>W（块内地址）</td><td>log₂(64)</td><td>6 位</td></tr>
+<tr><td>u（组号位数）</td><td>log₂(32)</td><td>5 位</td></tr>
+<tr><td>s（页号/Tag）</td><td>20 - 5 - 6</td><td>9 位</td></tr>
+</table>
+
+<div class="formula">主存地址格式：[ s:9位 | u:5位 | W:6位 ]</div>
+
+<p><strong>（2）地址 <code>02021H</code> 所在组号</strong></p>
+<div class="formula">02021H = 0000 0010 0000 0010 0001 B（20位）</div>
+<table>
+<tr><th>字段</th><th>位数范围（从高位）</th><th>二进制</th><th>十进制</th></tr>
+<tr><td>s（页号）</td><td>第19~11位</td><td>000000100</td><td>4</td></tr>
+<tr><td>u（组号）</td><td>第10~6位</td><td>00000</td><td>0</td></tr>
+<tr><td>W（块内）</td><td>第5~0位</td><td>100001</td><td>33</td></tr>
+</table>
+
+<div class="box tip">
+<div class="box-title">结论</div>
+<p>（1）s = 9位，u = 5位，W = 6位</p>
+<p>（2）该单元在 Cache 第 <strong>0 组</strong>（组号 = u字段 = 0）</p>
+<p>（3）Tag 字段占 <strong>9 位</strong>（即 s 字段）</p>
+</div>
+</div></details>
+
+<!-- ── 补充3.40 ── -->
+<div class="box problem" id="p340">
+<div class="box-title">⭐ 补充题 3.40 — 组相联映射综合计算</div>
+<p><strong>条件</strong>：主存地址 32 位，按字节编址；指令 Cache 和数据 Cache 与主存之间均采用 <strong>8路组相联映射</strong>、<strong>直写（Write Through）</strong>写策略、<strong>LRU</strong> 替换算法；主存块大小 <strong>64B</strong>；指令/数据 Cache 容量均为 <strong>32KB</strong>；开始时 Cache 均为空。</p>
+<p>（1）Cache 每一行中 Tag、LRU 位各占几位？是否有修改位？</p>
+<p>（2）有如下 C 语言程序段：</p>
+<pre>for(k=0; k&lt;1024; k++)  s[k]=2*s[k];</pre>
+<p>若 int 型数据占 4B，变量 k 分配在寄存器中，数组 s 在主存起始地址为 <code>0080 00C0H</code>，则该程序段执行过程中，<strong>访问数组 s 的数据 Cache 缺失次数</strong>为多少？</p>
+</div>
+
+<details open><summary>查看完整解题过程</summary>
+<div class="ans">
+
+<h4 class="point">第（1）部分 — Cache 行各字段位数</h4>
+
+<div class="steps">
+<div class="step"><div class="step-num">1</div><div class="step-body">
+<strong>计算地址各段位数</strong>
+<table>
+<tr><th>参数</th><th>计算</th><th>值</th></tr>
+<tr><td>主存总地址位数</td><td>题目给定</td><td>32位</td></tr>
+<tr><td>W（块内地址）</td><td>log₂(64B)</td><td>6位</td></tr>
+<tr><td>Cache总块数</td><td>32KB / 64B = 512块</td><td>512块</td></tr>
+<tr><td>每组块数（路数）</td><td>8路</td><td>8块/组</td></tr>
+<tr><td>Cache组数</td><td>512 / 8 = 64组</td><td>64组</td></tr>
+<tr><td>u（组号位数）</td><td>log₂(64)</td><td>6位</td></tr>
+<tr><td>s（Tag/页号）</td><td>32 - 6 - 6</td><td><span class="hl-blue">20位</span></td></tr>
+</table>
+<div class="formula">主存地址格式：[ Tag:20位 | 组号u:6位 | 块内W:6位 ]</div>
+</div></div>
+
+<div class="step"><div class="step-num">2</div><div class="step-body">
+<strong>LRU 位数</strong><br>
+8路组相联 → 需要区分组内8块的使用先后顺序 → 需要编码 0~7<br>
+<div class="formula">LRU 位数 = ⌈log₂(8)⌉ = 3 位</div>
+</div></div>
+
+<div class="step"><div class="step-num">3</div><div class="step-body">
+<strong>是否有修改位（脏位）？</strong><br>
+采用 <mark>Write Through（直写）</mark>：写 Cache 的同时也写主存，主存始终与 Cache 一致。<br>
+<span class="hl-green">→ 无需脏位（无修改位）</span>
+</div></div>
+</div>
+
+<div class="box tip">
+<div class="box-title">✅ 第（1）小问答案</div>
+<ul>
+<li><strong>Tag 占 20 位</strong></li>
+<li><strong>LRU 位占 3 位</strong></li>
+<li><strong>没有修改位</strong>（直写策略无需脏位）</li>
+</ul>
+</div>
+
+<hr>
+
+<h4 class="point">第（2）部分 — 数据 Cache 缺失次数</h4>
+
+<div class="steps">
+<div class="step"><div class="step-num">1</div><div class="step-body">
+<strong>确定数组 s 的大小与内存布局</strong><br>
+数组 s：1024 个 int，每个 4B → 总大小 = 1024 × 4 = <span class="hl-gold">4096B = 4KB</span><br>
+起始地址：<code>0080 00C0H</code>
+</div></div>
+
+<div class="step"><div class="step-num">2</div><div class="step-body">
+<strong>检查起始地址的块内偏移</strong><br>
+<span class="addr">0080 00C0H</span> 的低6位 = <span class="addr">C0H & 3FH = 00H</span>（全0！）<br>
+<div class="formula">0x...C0 = ...1100 0000，低6位 = 00 0000 = 0</div>
+<span class="hl-green">→ 数组 s 起始地址与主存块边界对齐</span>（块内偏移=0，s[0]恰好在某个主存块的开始处）
+</div></div>
+
+<div class="step"><div class="step-num">3</div><div class="step-body">
+<strong>计算数组 s 占多少个主存块</strong>
+<div class="formula">主存块数 = 4096B / 64B = 64 块</div>
+</div></div>
+
+<div class="step"><div class="step-num">4</div><div class="step-body">
+<strong>分析 Cache 缺失规律</strong><br>
+循环对每个 <code>s[k]</code> 先读后写（<code>s[k] = 2*s[k]</code>）：<br>
+• 由于地址对齐，每个主存块恰好对应 64/4 = 16 个 int 元素<br>
+• <span class="hl-gold">第一次访问某块的第1个元素（s[k]） → Cache 缺失</span>（调入整块）<br>
+• 该块内后续15个元素的访问 → Cache 命中（块已调入）<br>
+• 32KB Cache 远大于4KB数组 → <span class="hl-green">整个数组可一次性全部放入 Cache</span>，无替换<br>
+• 因此：每块<strong>恰好缺失1次</strong>（首次访问），共 64 块
+</div></div>
+
+<div class="step"><div class="step-num">5</div><div class="step-body">
+<strong>统计缺失次数</strong>
+<div class="formula">Cache 缺失次数 = 64 次（每块首次访问时缺失1次）</div>
+</div></div>
+</div>
+
+<div class="box key">
+<div class="box-title">✅ 第（2）小问答案</div>
+<p><strong>访问数组 s 的数据 Cache 缺失次数 = <span class="hl-gold">64 次</span></strong></p>
+<p>原因：数组对齐块边界，共占64个主存块，每块首次访问缺失1次，Cache 容量足够容纳全部数组，无额外替换缺失。</p>
+</div>
+
+<div class="box tip">
+<div class="box-title">💡 启示</div>
+对于追求高性能的程序，若数据能全部载入 Cache（数组大小 ≪ Cache 容量），代码运行效率极高。如本题中 4KB 数组远小于 32KB Cache，除首次各块的强制缺失（64次）外，后续循环中每次访问均命中。
+</div>
+</div></details>
+
+<!-- ── 扩展设计题 ── -->
+<div class="box problem" id="p323">
+<div class="box-title">题 3.23~3.27 — 存储器扩展设计题精解</div>
+</div>
+
+<h3 class="subsec">通用解题步骤模板</h3>
+<div class="box key">
+<div class="box-title">📐 扩展设计三步法</div>
+<div class="steps">
+<div class="step"><div class="step-num">1</div><div class="step-body">
+<strong>分析扩展类型</strong>：<br>
+位宽不足 → 位扩展；字数不足 → 字扩展；两者均不足 → 复合扩展<br>
+<div class="formula">所需芯片数 = (目标字数 / 芯片字数) × (目标位宽 / 芯片位宽)</div>
+</div></div>
+<div class="step"><div class="step-num">2</div><div class="step-body">
+<strong>确定地址线</strong>：<br>
+芯片地址线 n 根 → 接 CPU 的低 n 位地址（A₀~Aₙ₋₁）<br>
+剩余高位地址线 → 通过译码器产生各组片选信号
+</div></div>
+<div class="step"><div class="step-num">3</div><div class="step-body">
+<strong>画连接图</strong>（参考图3.24/3.25 格式）：<br>
+标注数据线（哪些位）、地址线（哪根到哪根）、CS# 逻辑
+</div></div>
+</div>
+</div>
+
+<h4 class="point">题 3.23：1M×1位 → 1M×8位</h4>
+<div class="box">
+<p>字数相同（1M），位宽1→8 → <strong>纯位扩展</strong>，需 <code>8 / 1 = 8 片</code></p>
+<ul>
+<li>8片 I/O 线分别接 D₇~D₀</li>
+<li>所有芯片 A₁₉~A₀ 并联，CS# 并联，R/W# 并联</li>
+</ul>
+<p>（连接方式见图 A）</p>
+</div>
+
+<h4 class="point">题 3.24：4K×8位 → 4K×16位</h4>
+<div class="box">
+<p>字数相同（4K），位宽8→16 → <strong>纯位扩展</strong>，需 <code>16/8 = 2 片</code></p>
+<ul>
+<li>片1：D₁₅~D₈；片2：D₇~D₀</li>
+<li>A₁₁~A₀ 并联，CS# 并联，R/W# 并联</li>
+</ul>
+</div>
+
+<h4 class="point">题 3.25：64K×8位 → 256K×8位</h4>
+<div class="box">
+<p>位宽相同（8位），字数64K→256K → <strong>纯字扩展</strong>，需 <code>256K/64K = 4 片</code></p>
+<ul>
+<li>各片 D₇~D₀ 并联到数据总线（三态隔离）</li>
+<li>A₁₅~A₀（16根低位地址线）并联到所有芯片</li>
+<li>A₁₇、A₁₆（2根高位地址线）→ 2-4 译码器 → 4 路 CS# 信号</li>
+<li>R/W# 并联</li>
+</ul>
+<table>
+<tr><th>A₁₇</th><th>A₁₆</th><th>选中芯片</th><th>地址区间</th></tr>
+<tr><td>0</td><td>0</td><td>芯片#0</td><td>0x00000~0x0FFFF</td></tr>
+<tr><td>0</td><td>1</td><td>芯片#1</td><td>0x10000~0x1FFFF</td></tr>
+<tr><td>1</td><td>0</td><td>芯片#2</td><td>0x20000~0x2FFFF</td></tr>
+<tr><td>1</td><td>1</td><td>芯片#3</td><td>0x30000~0x3FFFF</td></tr>
+</table>
+</div>
+
+<h4 class="point">题 3.26：1K×8位 → 8K×8位（8片）</h4>
+<div class="box">
+<p>位宽相同（8位），字数1K→8K → <strong>纯字扩展</strong>，需 <code>8K/1K = 8 片</code></p>
+<ul>
+<li>各片 D₇~D₀ 并联（三态隔离）</li>
+<li>A₉~A₀ 并联到所有芯片</li>
+<li>A₁₂、A₁₁、A₁₀（3位）→ 3-8 译码器 → 8 路 CS# 信号</li>
+<li>R/W# 并联</li>
+</ul>
+</div>
+
+<h4 class="point">题 3.27：4K×8位 → 8K×16位（4片）</h4>
+<div class="box">
+<p>字数4K→8K（×2），位宽8→16（×2）→ <strong>复合扩展</strong>，需 <code>2×2=4 片</code></p>
+<p>（完整连接图见图 C，解题分析见补充说明）</p>
+<ul>
+<li><strong>组0（A₁₂=0）</strong>：片#0（D₁₅~D₈）+ 片#1（D₇~D₀），地址 0x0000~0x0FFF</li>
+<li><strong>组1（A₁₂=1）</strong>：片#2（D₁₅~D₈）+ 片#3（D₇~D₀），地址 0x1000~0x1FFF</li>
+<li>A₁₁~A₀ 并联到全部芯片</li>
+<li>CS 信号逻辑：<br>
+　组0 CS = <code>(NOT A₁₂) AND CS（总）</code><br>
+　组1 CS = <code>A₁₂ AND CS（总）</code></li>
+<li>R/W# 并联</li>
+</ul>
+</div>
+
+</main>
+
+<script>
+// Sidebar active highlight on scroll
+const sections = document.querySelectorAll('[id]');
+const links = document.querySelectorAll('#sidebar a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 80) current = s.id;
+  });
+  links.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+</body>
+</html>
