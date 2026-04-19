@@ -11,6 +11,9 @@
 ## 计嵌
 - [第三章存储器讲义](计嵌/ch3_memory_system.html)
 
+## AI
+- [numpy-pytorch-pandas Tutorial](AI/numpy_pytorch_pandas_guide.html)
+
 ## **Misc**
 - [PE_Tutorial](Misc/PE_Tutorial.docx)
 
